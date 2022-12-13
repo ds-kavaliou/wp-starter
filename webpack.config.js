@@ -1,15 +1,17 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
-module.exports = () => {
+module.exports = (env) => {
+  const { mode } = env;
   return {
     entry: './src/index.ts',
     output: {
       filename: 'bundle.js',
       path: path.resolve(__dirname, 'dist'),
     },
-    mode: "development",
+    mode,
     devtool: 'inline-source-map',
     module: {
       rules: [
@@ -23,26 +25,31 @@ module.exports = () => {
         },
         {
           test: /\.css$/i,
-          use: [MiniCssExtractPlugin.loader, "css-loader"],
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
         },
         {
           test: /\.s[ac]ss$/i,
-          use: [
-            MiniCssExtractPlugin.loader,
-            "css-loader",
-            "sass-loader",
-          ],
+          use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
         },
         {
           test: /\.tsx?$/,
           use: 'ts-loader',
           exclude: /node_modules/,
-        }
+        },
       ],
     },
-    plugins: [new HtmlWebpackPlugin({
-      title: 'App',
-      template: './src/index.html'
-    }), new MiniCssExtractPlugin()]
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js'],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: 'App',
+        template: './src/index.html',
+      }),
+      new MiniCssExtractPlugin(),
+      new CopyPlugin({
+        patterns: [{ from: path.resolve(__dirname, 'src', 'assets'), to: path.resolve(__dirname, 'dist', 'assets') }],
+      }),
+    ],
   };
-} 
+};

@@ -1,4 +1,4 @@
-import "minireset.css";
-import "./styles/main.scss";
+import 'minireset.css';
+import './styles/main.scss';
 
-console.log("webpack starter");
+console.log('webpack starter');
